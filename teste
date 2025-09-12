@@ -1,0 +1,133 @@
+<script>
+        /* Salvar ficha automaticamente
+        window.addEventListener("beforeunload", () => {
+            localStorage.setItem("fichaRowan", document.querySelector(".sheet").innerHTML);
+        });*/
+
+        //Restaurar ficha ao carregar
+        document.addEventListener("DOMContentLoaded", () => {
+            const saved = localStorage.getItem("fichaRowan");
+            if (saved) document.querySelector(".sheet").innerHTML = saved;
+        });
+
+        // Salvar manualmente ao clicar no botão
+        document.addEventListener("DOMContentLoaded", () => {
+            const btnSalvar = document.getElementById("btn-salvar");
+            if (btnSalvar) {
+                btnSalvar.addEventListener("click", () => {
+                    const conteudo = document.querySelector(".sheet").innerHTML;
+                    localStorage.setItem("fichaRowan", conteudo);
+                    alert("Ficha salva com sucesso!");
+                });
+            }
+        });
+
+        // Torna todos os elementos com a classe 'v', 'cell', e blocos de texto editáveis ao clicar
+        document.addEventListener('DOMContentLoaded', () => {
+            // Editáveis simples (status, atributos, informações)
+            document.querySelectorAll('.v, .cell').forEach(el => {
+                el.addEventListener('click', function (e) {
+                    if (el.isContentEditable) return;
+                    el.contentEditable = true;
+                    el.focus();
+                    el.style.outline = '2px solid #b59a6a';
+                });
+                el.addEventListener('blur', function () {
+                    el.contentEditable = false;
+                    el.style.outline = '';
+                });
+            });
+
+            // Editar blocos de texto (história, descrição, etc.)
+            document.querySelectorAll('.block').forEach(block => {
+                block.addEventListener('click', function (e) {
+                    if (block.isContentEditable) return;
+                    block.contentEditable = true;
+                    block.focus();
+                    block.style.outline = '2px solid #b59a6a';
+                });
+                block.addEventListener('blur', function () {
+                    block.contentEditable = false;
+                    block.style.outline = '';
+                });
+            });
+
+            // Editar tabelas (proficiências, magias)
+            document.querySelectorAll('.table td').forEach(td => {
+                td.addEventListener('click', function () {
+                    if (td.isContentEditable) return;
+                    td.contentEditable = true;
+                    td.focus();
+                    td.style.outline = '2px solid #b59a6a';
+                });
+                td.addEventListener('blur', function () {
+                    td.contentEditable = false;
+                    td.style.outline = '';
+                });
+            });
+
+
+            // Adicionar magia
+            document.getElementById('add-magia').addEventListener('click', function () {
+                const tbody = document.querySelector('#magias-table tbody');
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td contenteditable="true" style="outline:2px solid #b59a6a;"></td>
+                                <td contenteditable="true" style="outline:2px solid #b59a6a;"></td>
+                                <td><button class="btn-del del-magia" title="Excluir magia" aria-label="Excluir magia">×</button></td>`;
+                tbody.appendChild(tr);
+                tr.querySelector('td').focus();
+                tr.querySelectorAll('td').forEach(td => {
+                    td.addEventListener('blur', function () {
+                        td.style.outline = '';
+                    });
+                });
+                tr.querySelector('.del-magia').addEventListener('click', function () {
+                    tr.remove();
+                });
+            });
+
+            // Excluir magia existente (caso já tenha no HTML)
+            document.querySelectorAll('.del-magia').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    btn.closest('tr').remove();
+                });
+            });
+
+            // Adicionar item ao inventário
+            document.getElementById('add-item').addEventListener('click', function () {
+                const chips = document.querySelector('#inventario .chips');
+                const span = document.createElement('span');
+                span.className = 'chip';
+                span.contentEditable = true;
+                span.style.outline = '2px solid #b59a6a';
+                span.innerText = 'Novo item';
+                // Botão de excluir
+                const btn = document.createElement('button');
+                btn.className = 'btn-del del-item';
+                btn.title = 'Excluir item';
+                btn.setAttribute('aria-label', 'Excluir item');
+                btn.innerText = '×';
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    span.remove();
+                });
+                span.appendChild(btn);
+                chips.appendChild(span);
+                span.focus();
+                span.addEventListener('blur', function () {
+                    span.style.outline = '';
+                    if (!span.innerText.replace('×', '').trim()) span.remove();
+                });
+            });
+
+            // Excluir item existente (caso já tenha no HTML)
+            document.querySelectorAll('.del-item').forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    btn.parentElement.remove();
+                });
+            });
+        });
+
+
+    </script>
